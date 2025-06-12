@@ -134,7 +134,8 @@ public class HoaDonGUI extends JPanel {
         
         
         HoaDonFactory factory = cboLoaiHD.getSelectedItem() == "Nhập"? new HoaDonNhapFactory() : new HoaDonBanFactory() ;
-        factory.TaoHoaDon(data).LuuHoaDon();
+        HoaDon hd = factory.TaoHoaDon(data);
+        factory.LuuHoaDon(hd);
         modelList.clear();
         JOptionPane.showMessageDialog(null,"Tạo hóa đơn thành công","Thông báo",JOptionPane.INFORMATION_MESSAGE);
         cboLoaiHD.setEnabled(true);
