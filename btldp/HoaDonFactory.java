@@ -1,6 +1,6 @@
 package btldp;
 
 public abstract class HoaDonFactory {
-	String loai;
-	public abstract HoaDon TaoHoaDon(MatHang[] ds,String doituong);
+	public abstract HoaDon TaoHoaDon(HoaDonData data);
+	public  void LuuHoaDon() {};
 }

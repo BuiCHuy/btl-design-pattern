@@ -1,12 +1,18 @@
 package btldp;
 
 public class MatHang {
-	String loai;
+	int id;
+	String tenmh;
 	double giaban;
 	double gianhap;
-	public MatHang(String loai,double giaban,double gianhap) {
-		this.loai = loai;
+	public MatHang(int id,String tenmh,double giaban,double gianhap) {
+		this.id = id;
+		this.tenmh = tenmh;
 		this.giaban = giaban;
 		this.gianhap = gianhap;
 	}
+	@Override
+    public String toString() {
+    	return tenmh;
+    }
 }	

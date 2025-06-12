@@ -6,13 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class HoaDonNhap extends HoaDon {
-
-	String NhaCungCap;
-	public HoaDonNhap(String Ma,List<ChiTietHoaDon> ds,String nhacungcap) {
+public class HoaDonBan extends HoaDon{
+	String khachhang;
+	public HoaDonBan(String Ma,List<ChiTietHoaDon> ds,String kh) {
 		this.Mahd = Ma;
 		this.ds = ds;
-		this.NhaCungCap = nhacungcap;
+		this.khachhang = kh; 
 		TinhTongTien();
 	}
 
@@ -20,7 +19,7 @@ public class HoaDonNhap extends HoaDon {
 	@Override
 	public String getLoai() {
 		// TODO Auto-generated method stub
-		return "Nhập";
+		return "Bán";
 	}
 	@Override
 	public void LuuHoaDon() {
@@ -31,7 +30,7 @@ public class HoaDonNhap extends HoaDon {
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, Mahd);
             stmt.setString(2,getLoai());
-            stmt.setString(3, NhaCungCap);
+            stmt.setString(3, khachhang);
             stmt.setDouble(4, TongTien);
             stmt.executeUpdate();
             
@@ -57,9 +56,8 @@ public class HoaDonNhap extends HoaDon {
 	public void TinhTongTien() {
 		// TODO Auto-generated method stub
 		for(ChiTietHoaDon ct: ds) {
-			TongTien += ct.TinhThanhTien("Nhập");
+			TongTien += ct.TinhThanhTien("Bán");
 		}
 	}
-	
 	
 }
