@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
             buttons = new String[]{"Trang chủ", "Tài khoản", "Sản phẩm", "Khách hàng", 
                 "Hóa đơn", "Doanh thu", "Phiếu giảm giá", "Đăng xuất"};
         } else {
-            buttons = new String[]{"Trang chủ", "Đăng xuất"};
+            buttons = new String[]{"Trang chủ","Hóa đơn" ,"Đăng xuất"};
         }
 
         contentPanel = new JPanel(new BorderLayout());

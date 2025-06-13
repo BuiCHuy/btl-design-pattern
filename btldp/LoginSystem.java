@@ -44,7 +44,7 @@ public class LoginSystem {
 
     public void saveToDatabase(TaiKhoanNguoiDung taiKhoan) {
         try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/btl", "root", "");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/btl1", "root", "");
             PreparedStatement pstmt = conn.prepareStatement(
                 "INSERT INTO accounts (username, password, role) VALUES (?, ?, ?)");
             pstmt.setString(1, taiKhoan.getUsername());
