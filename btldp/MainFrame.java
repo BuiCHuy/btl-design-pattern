@@ -85,13 +85,13 @@ public class MainFrame extends JFrame {
 //                    contentPanel.add(new JLabel("Doanh thu chưa được triển khai"));
 //                }
 //            }
-//            case "Phiếu giảm giá" -> {
-//                if (PhieuGiamGiaPanel.class.getName() != null) {
-//                    contentPanel.add(new PhieuGiamGiaPanel());
-//                } else {
-//                    contentPanel.add(new JLabel("Phiếu giảm giá chưa được triển khai"));
-//                }
-//            }
+            case "Phiếu giảm giá" -> {
+                if (PhieuGiamGiaPanel.class.getName() != null) {
+                    contentPanel.add(new PhieuGiamGiaPanel());
+                } else {
+                    contentPanel.add(new JLabel("Phiếu giảm giá chưa được triển khai"));
+                }
+            }
             case "Đăng xuất" -> {
                 int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn đăng xuất?", 
                     "Xác nhận", JOptionPane.YES_NO_OPTION);
