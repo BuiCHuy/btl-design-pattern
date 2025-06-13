@@ -3,7 +3,7 @@ package btldp;
 import java.util.List;
 
 public class HoaDonData {
-	public String mahd;
+	public int mahd;
 	public String loai;
 	public List<ChiTietHoaDon> ds ;
 	public String tenkh;

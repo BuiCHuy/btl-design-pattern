@@ -9,7 +9,7 @@ import java.util.List;
 public class HoaDonNhap extends HoaDon {
 
 	String NhaCungCap;
-	public HoaDonNhap(String Ma,List<ChiTietHoaDon> ds,String nhacungcap) {
+	public HoaDonNhap(int Ma,List<ChiTietHoaDon> ds,String nhacungcap) {
 		this.Mahd = Ma;
 		this.ds = ds;
 		this.NhaCungCap = nhacungcap;
@@ -23,22 +23,22 @@ public class HoaDonNhap extends HoaDon {
 		return "Nhập";
 	}
 	@Override
-	public void LuuHoaDon() {
+	public void LuuHoaDon() throws SQLException{
 		// TODO Auto-generated method stub
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl", "root", "")){
+		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl1", "root", "")){
             conn.setAutoCommit(false);
-            String query = "INSERT INTO hoadon(mahd, loai,doitac, tongtien) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO invoice(id,type,partner, total) VALUES (?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, Mahd);
+            stmt.setInt(1, Mahd);
             stmt.setString(2,getLoai());
             stmt.setString(3, NhaCungCap);
             stmt.setDouble(4, TongTien);
             stmt.executeUpdate();
             
-            String query2 = "INSERT INTO chitiethoadon(mahd, mathang_id, soluong) VALUES (?, ?, ?)";
+            String query2 = "INSERT INTO invoice_detail(invoice_id, product_id, quantity) VALUES (?, ?, ?)";
             PreparedStatement stmt2 = conn.prepareStatement(query2);
             for(ChiTietHoaDon ct: ds) {
-            	stmt2.setString(1,Mahd);
+            	stmt2.setInt(1,Mahd);
                 stmt2.setInt(2,ct.mathang.id);
                 stmt2.setInt(3, ct.soluong);
                 stmt2.addBatch();
@@ -47,9 +47,9 @@ public class HoaDonNhap extends HoaDon {
             conn.commit();
             
 		}
-		catch(SQLException e) {
-            e.printStackTrace();
-		}
+//		catch(SQLException e) {
+//            e.printStackTrace();
+//		}
 	}
 
 

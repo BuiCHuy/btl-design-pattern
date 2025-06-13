@@ -38,7 +38,7 @@ public class QLHoaDonPanel extends JPanel {
         tblHoaDon.getSelectionModel().addListSelectionListener(e -> {
             int row = tblHoaDon.getSelectedRow();
             if (row >= 0) {
-                String mahd = (String) modelHD.getValueAt(row, 0);
+                int mahd =  Integer.parseUnsignedInt( (String) modelHD.getValueAt(row, 0));
                 loadChiTiet(mahd);
             }
         });
@@ -46,15 +46,15 @@ public class QLHoaDonPanel extends JPanel {
 
     public void loadHoaDon() {
     	modelHD.setRowCount(0);
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl", "root", "");
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl1", "root", "");
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM hoadon")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM invoice")) {
             modelHD.setRowCount(0); // Clear table
             while (rs.next()) {
-                String mahd = rs.getString("mahd");
-                String loai = rs.getString("loai");
-                String doiTac = rs.getString("doitac");
-                double tong = rs.getDouble("tongtien");
+                String mahd = rs.getString("id");
+                String loai = rs.getString("type");
+                String doiTac = rs.getString("partner");
+                double tong = rs.getDouble("total");
                 modelHD.addRow(new Object[]{mahd, loai, doiTac, tong});
             }
         } catch (SQLException e) {
@@ -62,26 +62,30 @@ public class QLHoaDonPanel extends JPanel {
         }
     }
 
-    private void loadChiTiet(String mahd) {
+    private void loadChiTiet(int mahd) {
     	modelCT.setRowCount(0);
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl", "root", "");
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl1", "root", "");
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT ct.mathang_id, mh.loai, ct.soluong, " +
-                             "IF(hd.loai='Bán', mh.giaban, mh.gianhap) AS dongia, " +
-                             "ct.soluong * IF(hd.loai='Bán', mh.giaban, mh.gianhap) AS thanhtien " +
-                             "FROM chitiethoadon ct " +
-                             "JOIN mathang mh ON ct.mathang_id = mh.id " +
-                             "JOIN hoadon hd ON ct.mahd = hd.mahd " +
-                             "WHERE ct.mahd = ?")) {
-            stmt.setString(1, mahd);
+                     "SELECT \r\n"
+                     + "    idt.product_id,\r\n"
+                     + "    p.name,\r\n"
+                     + "    idt.quantity,\r\n"
+                     + "    IF(i.type = 'Sale', p.selling_price, p.purchase_price) AS unit_price,\r\n"
+                     + "    idt.quantity * IF(i.type = 'Sale', p.selling_price, p.purchase_price) AS total_price\r\n"
+                     + "FROM invoice_detail idt\r\n"
+                     + "JOIN product p ON idt.product_id = p.id\r\n"
+                     + "JOIN invoice i ON idt.invoice_id = i.id\r\n"
+                     + "WHERE idt.invoice_id = ?\r\n"
+                     + "")) {
+            stmt.setInt(1, mahd);
             ResultSet rs = stmt.executeQuery();
             modelCT.setRowCount(0);
             while (rs.next()) {
-                int id = rs.getInt("mathang_id");
-                String ten = rs.getString("loai");
-                int sl = rs.getInt("soluong");
-                double dongia = rs.getDouble("dongia");
-                double tt = rs.getDouble("thanhtien");
+                int id = rs.getInt("product_id");
+                String ten = rs.getString("name");
+                int sl = rs.getInt("quantity");
+                double dongia = rs.getDouble("unit_price");
+                double tt = rs.getDouble("total_price");
                 modelCT.addRow(new Object[]{id, ten, sl, dongia, tt});
             }
         } catch (SQLException e) {

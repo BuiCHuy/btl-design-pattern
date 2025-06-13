@@ -8,8 +8,8 @@ import java.util.List;
 
 public class HoaDonBan extends HoaDon{
 	String khachhang;
-	public HoaDonBan(String Ma,List<ChiTietHoaDon> ds,String kh) {
-		this.Mahd = Ma;
+	public HoaDonBan(int mahd,List<ChiTietHoaDon> ds,String kh) {
+		this.Mahd = mahd;
 		this.ds = ds;
 		this.khachhang = kh; 
 		TinhTongTien();
@@ -22,22 +22,22 @@ public class HoaDonBan extends HoaDon{
 		return "Bán";
 	}
 	@Override
-	public void LuuHoaDon() {
+	public void LuuHoaDon() throws SQLException{
 		// TODO Auto-generated method stub
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl", "root", "")){
+		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl1", "root", "")){
             conn.setAutoCommit(false);
-            String query = "INSERT INTO hoadon(mahd, loai,doitac, tongtien) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO invoice(id,type,partner, total) VALUES (?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, Mahd);
+            stmt.setInt(1, Mahd);
             stmt.setString(2,getLoai());
             stmt.setString(3, khachhang);
             stmt.setDouble(4, TongTien);
             stmt.executeUpdate();
             
-            String query2 = "INSERT INTO chitiethoadon(mahd, mathang_id, soluong) VALUES (?, ?, ?)";
+            String query2 = "INSERT INTO invoice_detail(invoice_id, product_id, quantity) VALUES (?, ?, ?)";
             PreparedStatement stmt2 = conn.prepareStatement(query2);
             for(ChiTietHoaDon ct: ds) {
-            	stmt2.setString(1,Mahd);
+            	stmt2.setInt(1,Mahd);
                 stmt2.setInt(2,ct.mathang.id);
                 stmt2.setInt(3, ct.soluong);
                 stmt2.addBatch();
@@ -46,9 +46,9 @@ public class HoaDonBan extends HoaDon{
             conn.commit();
             
 		}
-		catch(SQLException e) {
-            e.printStackTrace();
-		}
+//		catch(SQLException e) {
+//            e.printStackTrace();
+//		}
 	}
 
 

@@ -12,7 +12,7 @@ import java.util.*;
 public class HoaDonGUI extends JPanel {
     private JTextField txtMaHD, txtTen, txtSoLuong;
     private JComboBox<String> cboLoaiHD;
-    private JComboBox<MatHang> cboMatHang;
+    private JComboBox<SanPham> cboMatHang;
     private DefaultListModel<String> modelList;
     private JList<String> listChiTiet;
     private List<ChiTietHoaDon> dsChiTiet = new ArrayList<>();
@@ -70,11 +70,19 @@ public class HoaDonGUI extends JPanel {
     }
 
     private void loadMatHang() {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl", "root", "");
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/btl1", "root", "");
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM mathang")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM product")) {
             while (rs.next()) {
-                MatHang mh = new MatHang(rs.getInt("id"), rs.getString("loai"), rs.getDouble("giaban"), rs.getDouble("gianhap"));
+            	SanPham mh;
+            	if(rs.getString("type")=="Food") {
+                	mh = new SanPhamDoAn(rs.getInt("id"), rs.getString("name"), rs.getDouble("purchase_price"),rs.getDouble("selling_price") ,rs.getString("type"),rs.getDate("date"),rs.getInt("quantity"));
+	
+            	}
+            	else if(rs.getString("type")=="Electronic") {
+            		mh = new SanPhamDienTu(rs.getInt("id"), rs.getString("name"), rs.getDouble("purchase_price"),rs.getDouble("selling_price") ,rs.getString("type"),rs.getDate("date"),rs.getInt("quantity"));
+            	}
+            	else mh = new SanPhamHocTap(rs.getInt("id"), rs.getString("name"), rs.getDouble("purchase_price"),rs.getDouble("selling_price") ,rs.getString("type"),rs.getDate("date"),rs.getInt("quantity"));
                 cboMatHang.addItem(mh);
             }
         } catch (SQLException e) {
@@ -83,34 +91,40 @@ public class HoaDonGUI extends JPanel {
     }
 
     private void themMatHang() {
-    	MatHang mh = (MatHang) cboMatHang.getSelectedItem();
-        if (mh == null) return;
+    	if(txtMaHD.getText().isEmpty()||txtTen.getText().isEmpty()||txtSoLuong.getText().isBlank()) {
+    		JOptionPane.showMessageDialog(null, "Không được để trống, vui lòng nhập lại","Thông báo",JOptionPane.ERROR_MESSAGE);
+    	}
+    	else {
+    		
+            try {
+            	SanPham mh = (SanPham) cboMatHang.getSelectedItem();
+                if (mh == null) return;
 
-        String loaiHoaDon = (String) cboLoaiHD.getSelectedItem();
-        int sl;
-        try {
-            sl = Integer.parseInt(txtSoLuong.getText());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
-            return;
-        }
+                String loaiHoaDon = (String) cboLoaiHD.getSelectedItem();
+                int sl;
+                sl = Integer.parseInt(txtSoLuong.getText());
+                ChiTietHoaDon ct = new ChiTietHoaDon(txtMaHD.getText(), mh, sl);
+                dsChiTiet.add(ct);
 
-        ChiTietHoaDon ct = new ChiTietHoaDon(txtMaHD.getText(), mh, sl);
-        dsChiTiet.add(ct);
+                double thanhTien = ct.TinhThanhTien(loaiHoaDon);
 
-        double thanhTien = ct.TinhThanhTien(loaiHoaDon);
+                String chiTiet = "Mã MH: " + mh.id +
+                        " | Tên: " + mh.name +
+                        " | SL: " + sl +
+                        " | Đơn giá: " + (loaiHoaDon.equals("Bán") ? mh.sellingPrice : mh.purchasePrice) +
+                        " | Thành tiền: " + thanhTien + " VND";
 
-        String chiTiet = "Mã MH: " + mh.id +
-                " | Tên: " + mh.tenmh +
-                " | SL: " + sl +
-                " | Đơn giá: " + (loaiHoaDon.equals("Bán") ? mh.giaban : mh.gianhap) +
-                " | Thành tiền: " + thanhTien + " VND";
-
-        modelList.addElement(chiTiet);
-        capNhatTongTien();
-        cboLoaiHD.setEnabled(false);
-        txtMaHD.setEnabled(false);
-        txtTen.setEnabled(false);
+                modelList.addElement(chiTiet);
+                capNhatTongTien();
+                cboLoaiHD.setEnabled(false);
+                txtMaHD.setEnabled(false);
+                txtTen.setEnabled(false);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Số lượng không hợp lệ","Thông báo",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    	}
+    	
     }
 
     private void capNhatTongTien() {
@@ -123,29 +137,40 @@ public class HoaDonGUI extends JPanel {
     }
 
     private void luuHoaDon() {
-    	HoaDonData data = new HoaDonData();
-        data.mahd = txtMaHD.getText();
-        data.loai = (String) cboLoaiHD.getSelectedItem();
-        data.ds = dsChiTiet;
-        if(data.loai=="Bán") {
-        	data.tenkh = txtTen.getText();
+    	try {
+	    	HoaDonData data = new HoaDonData();
+	    	data.mahd = Integer.parseInt( txtMaHD.getText());
+	        data.loai = (String) cboLoaiHD.getSelectedItem();
+	        data.ds = dsChiTiet;
+	        if(data.loai=="Bán") {
+	        	data.tenkh = txtTen.getText();
+	        }
+	        else data.nhacungcap = txtTen.getText();
+	        
+	        
+	        HoaDonFactory factory = cboLoaiHD.getSelectedItem() == "Nhập"? new HoaDonNhapFactory() : new HoaDonBanFactory() ;
+	        HoaDon hd = factory.TaoHoaDon(data);
+	        
+	        factory.LuuHoaDon(hd);
+	        modelList.clear();
+	        JOptionPane.showMessageDialog(null,"Tạo hóa đơn thành công","Thông báo",JOptionPane.INFORMATION_MESSAGE);
+	        cboLoaiHD.setEnabled(true);
+	        txtMaHD.setEnabled(true);
+	        txtTen.setEnabled(true);
+	        txtMaHD.setText("");
+	        txtTen.setText("");
+	        txtSoLuong.setText("");
+	        lblTongTien.setText("Tổng tiền: 0 VND");
+	        dsChiTiet.clear();
+	        qlhd.loadHoaDon();
+    	}
+		catch(NumberFormatException e) {
+    		JOptionPane.showMessageDialog(null,"Mã hóa đơn phải nhập số","Thông báo",JOptionPane.ERROR_MESSAGE);
+        	txtMaHD.setEnabled(true);
+    	}
+        catch(SQLException e) {
+        	JOptionPane.showMessageDialog(null, "Mã hóa đơn bị trùng!","Lỗi",JOptionPane.ERROR_MESSAGE);
+        	txtMaHD.setEnabled(true);
         }
-        else data.nhacungcap = txtTen.getText();
-        
-        
-        HoaDonFactory factory = cboLoaiHD.getSelectedItem() == "Nhập"? new HoaDonNhapFactory() : new HoaDonBanFactory() ;
-        HoaDon hd = factory.TaoHoaDon(data);
-        factory.LuuHoaDon(hd);
-        modelList.clear();
-        JOptionPane.showMessageDialog(null,"Tạo hóa đơn thành công","Thông báo",JOptionPane.INFORMATION_MESSAGE);
-        cboLoaiHD.setEnabled(true);
-        txtMaHD.setEnabled(true);
-        txtTen.setEnabled(true);
-        txtMaHD.setText("");
-        txtTen.setText("");
-        txtSoLuong.setText("");
-        lblTongTien.setText("Tổng tiền: 0 VND");
-        dsChiTiet.clear();
-        qlhd.loadHoaDon();
     }
 }
