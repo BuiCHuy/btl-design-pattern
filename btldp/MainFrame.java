@@ -78,13 +78,13 @@ public class MainFrame extends JFrame {
                     contentPanel.add(new JLabel("Hóa đơn chưa được triển khai"));
                 }
             }
-//            case "Doanh thu" -> {
-//                if (DoanhThuPanel.class.getName() != null) {
-//                    contentPanel.add(new DoanhThuPanel());
-//                } else {
-//                    contentPanel.add(new JLabel("Doanh thu chưa được triển khai"));
-//                }
-//            }
+            case "Doanh thu" -> {
+                if (DoanhThuPanel.class.getName() != null) {
+                    contentPanel.add(new DoanhThuPanel());
+                } else {
+                    contentPanel.add(new JLabel("Doanh thu chưa được triển khai"));
+                }
+            }
             case "Phiếu giảm giá" -> {
                 if (PhieuGiamGiaPanel.class.getName() != null) {
                     contentPanel.add(new PhieuGiamGiaPanel());
