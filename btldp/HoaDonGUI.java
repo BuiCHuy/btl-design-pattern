@@ -45,7 +45,7 @@ public class HoaDonGUI extends JPanel {
         midPanel.add(txtSoLuong);
         JButton btnThem = new JButton("Thêm mặt hàng");
         midPanel.add(btnThem);
-
+        
         // Danh sách mặt hàng
         modelList = new DefaultListModel<>();
         listChiTiet = new JList<>(modelList);
@@ -55,9 +55,13 @@ public class HoaDonGUI extends JPanel {
         JPanel bottomPanel = new JPanel(new BorderLayout());
         lblTongTien = new JLabel("Tổng tiền: 0");
         JButton btnLuu = new JButton("Lưu hóa đơn");
-        bottomPanel.add(lblTongTien, BorderLayout.WEST);
-        bottomPanel.add(btnLuu, BorderLayout.EAST);
+        JButton btnHuy = new JButton("Hủy đơn");
 
+        bottomPanel.add(lblTongTien, BorderLayout.WEST);
+        JPanel groupBtn = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        groupBtn.add(btnLuu, BorderLayout.WEST);
+        groupBtn.add(btnHuy, BorderLayout.EAST);
+        bottomPanel.add(groupBtn,BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);       
         add(midPanel, BorderLayout.LINE_END);         
@@ -67,6 +71,8 @@ public class HoaDonGUI extends JPanel {
 
         btnThem.addActionListener(e -> themMatHang());
         btnLuu.addActionListener(e -> luuHoaDon());
+        btnHuy.addActionListener(e -> huyDon());
+        
     }
 
     private void loadMatHang() {
@@ -173,4 +179,19 @@ public class HoaDonGUI extends JPanel {
         	txtMaHD.setEnabled(true);
         }
     }
+    private void huyDon() {
+        int xacNhan = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy đơn?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (xacNhan == JOptionPane.YES_OPTION) {
+            modelList.clear();           
+            dsChiTiet.clear();            
+            txtMaHD.setText("");           
+            txtTen.setText("");
+            txtSoLuong.setText("");
+            cboLoaiHD.setEnabled(true);    
+            txtMaHD.setEnabled(true);
+            txtTen.setEnabled(true);
+            lblTongTien.setText("Tổng tiền: 0 VND"); 
+        }
+    }
+
 }
