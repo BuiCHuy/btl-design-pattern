@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 13, 2025 lúc 07:38 AM
+-- Thời gian đã tạo: Th6 13, 2025 lúc 08:05 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -54,13 +54,6 @@ CREATE TABLE `customer` (
   `rank` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `customer`
---
-
-INSERT INTO `customer` (`id`, `hoten`, `diachi`, `sdt`, `rank`) VALUES
-(1, '2', '4', '3', 'vip');
-
 -- --------------------------------------------------------
 
 --
@@ -75,18 +68,6 @@ CREATE TABLE `invoice` (
   `created_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `invoice`
---
-
-INSERT INTO `invoice` (`id`, `type`, `partner`, `total`, `created_date`) VALUES
-(1, 'Bán', 'huy dz', 120000.00, '2025-06-12 22:04:18'),
-(2, 'Bán', 'huy super dz', 80000.00, '2025-06-13 08:56:32'),
-(3, 'Bán', 'dskop12', 30000.00, '2025-06-13 08:58:37'),
-(4, 'Bán', '1', 30000.00, '2025-06-13 08:58:59'),
-(8, 'Bán', '1', 30000.00, '2025-06-13 11:40:39'),
-(9, 'Nhập', 'anh kkkk', 700000.00, '2025-06-13 11:41:05');
-
 -- --------------------------------------------------------
 
 --
@@ -100,23 +81,21 @@ CREATE TABLE `invoice_detail` (
   `quantity` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Đang đổ dữ liệu cho bảng `invoice_detail`
+-- Cấu trúc bảng cho bảng `phieu_giam_gia`
 --
 
-INSERT INTO `invoice_detail` (`id`, `invoice_id`, `product_id`, `quantity`) VALUES
-(1, 1, 1, 1),
-(2, 1, 2, 2),
-(3, 1, 3, 1),
-(4, 2, 1, 1),
-(5, 2, 2, 1),
-(6, 2, 3, 1),
-(7, 3, 1, 1),
-(8, 4, 1, 1),
-(9, 8, 1, 1),
-(10, 9, 2, 10),
-(11, 9, 1, 10),
-(12, 9, 3, 10);
+CREATE TABLE `phieu_giam_gia` (
+  `ma` varchar(10) NOT NULL,
+  `ten_chuong_trinh` varchar(100) NOT NULL,
+  `loai_giam_gia` enum('Phần trăm','Tiền mặt') NOT NULL,
+  `muc_giam` double NOT NULL,
+  `ngay_bat_dau` date NOT NULL,
+  `ngay_ket_thuc` date NOT NULL,
+  `trang_thai` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -174,6 +153,12 @@ ALTER TABLE `invoice_detail`
   ADD PRIMARY KEY (`id`),
   ADD KEY `invoice_id` (`invoice_id`),
   ADD KEY `product_id` (`product_id`);
+
+--
+-- Chỉ mục cho bảng `phieu_giam_gia`
+--
+ALTER TABLE `phieu_giam_gia`
+  ADD PRIMARY KEY (`ma`);
 
 --
 -- Chỉ mục cho bảng `product`
