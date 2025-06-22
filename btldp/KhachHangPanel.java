@@ -104,12 +104,7 @@ public class KhachHangPanel extends JPanel {
                     KhachHangFactory kh = danhSachKH.get(row);
                     int id = Integer.parseInt((String)table.getValueAt(row, 0));
                     
-                    if(kh instanceof KhachTgFac) {
-                    	kh = (KhachTgFac) kh;
-                    }
-                    else if (kh instanceof KhachVipFac) {
-                    	kh = (KhachVipFac) kh;
-                    }
+                   
                     
                     String in4 = kh.getInfo(id);
                     String[] arrin4 = in4.split("\\|");
@@ -239,6 +234,7 @@ public class KhachHangPanel extends JPanel {
         model.setValueAt(diachims, row, 3);
         model.setValueAt(loaims, row, 4);
         clearForm();
+        JOptionPane.showMessageDialog(null, "Sửa thành công");
     }
 
     private void xoaKhachHang() {
